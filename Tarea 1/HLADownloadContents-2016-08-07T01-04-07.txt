@@ -1,5 +1,0 @@
-HLA Items downloaded on 7 Aug 2016 01:04:07 GMT
-
-Data Set Name	File Name	Description
-hst_10396_a4_acs_hrc_f555w	hst_10396_a4_acs_hrc_f555w_drz.fits	NGC121 ACS/HRC HRC-FIX
-hst_10396_a4_acs_hrc_f814w	hst_10396_a4_acs_hrc_f814w_drz.fits	NGC121 ACS/HRC HRC-FIX
