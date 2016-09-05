@@ -1,0 +1,146 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "import kplr\n",
+    "import matplotlib.pyplot as plt\n",
+    "import numpy as np"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Curvas de luz de *Kepler*\n",
+    "## Misión Kepler\n",
+    "La misión de Kepler es explorar la estructura y diversidad de sistemas planetarios, esto se logra por un estudio de una muestra grande de estrellas, en los que destaca: (http://kepler.nasa.gov/Mission/QuickGuide/) \n",
+    "* Determinar la abundancia de planetas terrestres cerca o dentro de la zona habitable de distintos tipos de estrellas.\n",
+    "* Detereminar la distribución de las formas y tamaños de las órbitas de los planetas.\n",
+    "* Estimar la cantidad de planetas que hay en sistemas de estrellas multiples.\n",
+    "* Determinar la variabilidad de los tamaños de la órbita y planetas reflectivos, tamaños masas y densidades de planetas gigantes de corto periodo.\n",
+    "* Identificar miembros adicionales de cada sistema planetario descubierto utilizando otras técnicas.\n",
+    "* Determinar las propiedades de las estrellas que albergan sistemas planetarios.\n",
+    "\n",
+    "\n",
+    "La misión K2 tiene como principal objetivo la observación de transitos planetarios, para poder encontrar planetas parecidos al nuestro y para resolver el paradigma de los \"hot Jupiter\".\n",
+    "\n",
+    "Kepler object of interest (KOI), Kepler input catalogue (KIC) y Ecliptic plane input catalogue (EPIC)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "%matplotlib inline\n",
+    "client = kplr.API()\n",
+    "\n",
+    "IDs = [2305930, 4348593, 9469165, 7021124]#7198959]#\n",
+    "all_time, all_flux, all_flux_err, all_Teff, all_FeH, all_logg = [], [], [], [], [], []\n",
+    "for element in IDs:\n",
+    "    kic = client.star(element)\n",
+    "    lcs = kic.get_light_curves()\n",
+    "    time, flux, flux_err = [], [], []\n",
+    "    for lc in lcs:\n",
+    "        with lc.open() as f:\n",
+    "            # The lightcurve data are in the first FITS HDU.\n",
+    "            hdu_data = f[1].data\n",
+    "            hdu_header = f[0].header\n",
+    "            time.append(hdu_data[\"time\"])\n",
+    "            flux.append(hdu_data[\"pdcsap_flux\"])\n",
+    "            flux_err.append(hdu_data[\"pdcsap_flux_err\"])\n",
+    "    all_Teff.append(hdu_header[\"TEFF\"])\n",
+    "    all_FeH.append(hdu_header[\"FEH\"])\n",
+    "    all_logg.append(hdu_header[\"LOGG\"])\n",
+    "    all_time.append(time)\n",
+    "    all_flux.append(flux)\n",
+    "    all_flux_err.append(flux_err)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "KIC  2305930\n",
+      "Teff = 4891 K\tFeH = -0.69 [Fe/H]\tlog(g) = 2.367 \n",
+      "\n",
+      "KIC  4348593\n",
+      "Teff = 5065 K\tFeH = 0.04 [Fe/H]\tlog(g) = 2.701 \n",
+      "\n",
+      "KIC  9469165\n",
+      "Teff = 4997 K\tFeH = -0.78 [Fe/H]\tlog(g) = 2.374 \n",
+      "\n",
+      "KIC  7021124\n",
+      "Teff = 6235 K\tFeH = -0.02 [Fe/H]\tlog(g) = 3.587 \n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "for i in range(0,len(IDs)):\n",
+    "    print \"KIC \",IDs[i]\n",
+    "    print \"Teff =\",all_Teff[i],\"K\\t\",\"FeH =\",all_FeH[i],\"[Fe/H]\\t\",\"log(g) =\",all_logg[i],\"\\n\""
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "from isochrones import StarModel\n",
+    "from isochrones.dartmouth import Dartmouth_Isochrone\n",
+    "import corner\n",
+    "\n",
+    "Teff = (all_Teff[0], 0)\n",
+    "logg = (all_logg[3], 0)\n",
+    "feh = (all_FeH[3], 0)\n",
+    "\n",
+    "dar = Dartmouth_Isochrone()\n",
+    "\n",
+    "model  = StarModel(dar, Teff=Teff, logg=logg, feh=feh)\n",
+    "model.fit(overwrite=True)\n",
+    "model.triangle()\n"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python [Root]",
+   "language": "python",
+   "name": "Python [Root]"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 2
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython2",
+   "version": "2.7.12"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 0
+}
