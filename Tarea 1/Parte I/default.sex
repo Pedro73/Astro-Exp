@@ -12,10 +12,10 @@ PARAMETERS_NAME  default.param  # name of the file containing catalog contents
 #------------------------------- Extraction ----------------------------------
  
 DETECT_TYPE      CCD            # CCD (linear) or PHOTO (with gamma correction)
-DETECT_MINAREA   7              # minimum number of pixels above threshold
+DETECT_MINAREA   5              # minimum number of pixels above threshold
 THRESH_TYPE      RELATIVE       # threshold type: RELATIVE (in sigmas)
                                 # or ABSOLUTE (in ADUs)
-DETECT_THRESH    2.75            # <sigmas> or <threshold>,<ZP> in mag.arcsec-2
+DETECT_THRESH    2.0            # <sigmas> or <threshold>,<ZP> in mag.arcsec-2
 ANALYSIS_THRESH  1.5            # <sigmas> or <threshold>,<ZP> in mag.arcsec-2
  
 FILTER           Y              # apply filter for detection (Y or N)?
@@ -23,7 +23,7 @@ FILTER_NAME      default.conv   # name of the file containing the filter
 FILTER_THRESH                   # Threshold[s] for retina filtering
  
 DEBLEND_NTHRESH  50             # Number of deblending sub-thresholds
-DEBLEND_MINCONT  0.0005          # Minimum contrast parameter for deblending
+DEBLEND_MINCONT  0.005          # Minimum contrast parameter for deblending
  
 CLEAN            Y              # Clean spurious detections? (Y or N)?
 CLEAN_PARAM      1.0            # Cleaning efficiency
@@ -60,20 +60,20 @@ SATUR_KEY        SATURATE       # keyword for saturation level (in ADUs)
  
 MAG_ZEROPOINT    0.0            # magnitude zero-point
 MAG_GAMMA        4.0            # gamma of emulsion (for photographic scans)
-GAIN             2.0            # detector gain in e-/ADU
+GAIN             1.0            # detector gain in e-/ADU
 GAIN_KEY         1.0            # keyword for detector gain in e-/ADU
-PIXEL_SCALE      0              # size of pixel in arcsec (0=use FITS WCS info)
+PIXEL_SCALE      0.025              # size of pixel in arcsec (0=use FITS WCS info)
  
 #------------------------- Star/Galaxy Separation ----------------------------
  
-SEEING_FWHM      1.2            # stellar FWHM in arcsec
+SEEING_FWHM      0.1            # stellar FWHM in arcsec
 STARNNW_NAME     default.nnw    # Neural-Network_Weight table filename
  
 #------------------------------ Background -----------------------------------
  
 BACK_TYPE        AUTO           # AUTO or MANUAL
 BACK_VALUE       0.0            # Default background value in MANUAL mode
-BACK_SIZE        100            # Background mesh: <size> or <width>,<height>
+BACK_SIZE        64            # Background mesh: <size> or <width>,<height>
 BACK_FILTERSIZE  3              # Background filter: <size> or <width>,<height>
  
 BACKPHOTO_TYPE   GLOBAL          # can be GLOBAL or LOCAL
